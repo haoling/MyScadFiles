@@ -1,4 +1,4 @@
-use <../../common.scad>;
+use <../common.scad>;
 
 $fa = 0.1;
 $fs = 0.1;
@@ -90,8 +90,8 @@ if (0)
 }
 
 // レール130mm
-if (1) {
-  space = (130 % (PITCH * 2)) / 2;
+space = (130 % (PITCH * 2)) / 2;
+if (0) {
   rail(length = space);
   translate([0, space + (PITCH * 0), 0]) rail(pillar = true, sideL = false, sideR = false);
   translate([0, space + (PITCH * 1), 0]) rail(pillar = false, sideL = false, sideR = true);
@@ -101,6 +101,49 @@ if (1) {
   translate([0, space + (PITCH * 4), 0]) rail(pillar = false, sideL = false, sideR = true);
   translate([0, space + (PITCH * 5), 0]) rail(pillar = true, sideL = false, sideR = false);
   translate([0, space + (PITCH * 6), 0]) rail(length = space);
+}
+
+// 柱 140mm
+if (0) {
+  for (x = [0 : 2]) {
+    translate([CONNECTOR_DEPTH + 1 + (x * 12), 0, 0])
+    linear_extrude(height = pD)
+    {
+      translate([0,  0 * 7, 0]) translate([w / 2, 7, 0]) mirror([0, 1, 0]) connector_female_2d(7);
+      for (y = [1 : 18]) translate([0,  y * 7, 0]) fillet() square([w, 7]);
+      translate([0,  19 * 7, 0]) translate([w / 2, 0, 0]) connector_female_2d(7);
+      translate([0, ((10 * 7) - (w * 1)) + (w / 2) - 1]) rotate([0, 0, 90]) connector_female_2d(CONNECTOR_DEPTH + 1);
+      translate([0, ((10 * 7) - (w * 2)) + (w / 2) - 1]) rotate([0, 0, 90]) connector_female_2d(CONNECTOR_DEPTH + 1);
+    }
+  }
+}
+
+// 中間の横2連レール
+if (1) {
+  // translate([4, 64, -12]) rotate([90, 0 ,90])
+  translate([w, 0, 0])
+  {
+    rail(length = space);
+    translate([0, space + (PITCH * 0), 0]) rail(pillar = true, sideL = false, sideR = false);
+    translate([0, space + (PITCH * 1), 0]) rail(pillar = false, sideL = false, sideR = false);
+    translate([0, space + (PITCH * 2), 0]) rail(length = PITCH / 2);
+    translate([0, space + (PITCH * 2.5), 0]) rail(pillar = true, sideL = false, sideR = false);
+    translate([0, space + (PITCH * 3.5), 0]) rail(length = PITCH / 2);
+    translate([0, space + (PITCH * 4), 0]) rail(pillar = false, sideL = false, sideR = false);
+    translate([0, space + (PITCH * 5), 0]) rail(pillar = true, sideL = false, sideR = false);
+    translate([0, space + (PITCH * 6), 0]) rail(length = space);
+    translate([0 - w, 0, 0]) {
+      rail(length = space);
+      translate([0, space + (PITCH * 0), 0]) rail(pillar = true, sideL = false, sideR = false);
+      translate([0, space + (PITCH * 1), 0]) rail(pillar = false, sideL = false, sideR = false);
+      translate([0, space + (PITCH * 2), 0]) rail(length = PITCH / 2);
+      translate([0, space + (PITCH * 2.5), 0]) rail(pillar = true, sideL = false, sideR = false);
+      translate([0, space + (PITCH * 3.5), 0]) rail(length = PITCH / 2);
+      translate([0, space + (PITCH * 4), 0]) rail(pillar = false, sideL = false, sideR = false);
+      translate([0, space + (PITCH * 5), 0]) rail(pillar = true, sideL = false, sideR = false);
+      translate([0, space + (PITCH * 6), 0]) rail(length = space);
+    }
+  }
 }
 
 module rail(length = PITCH, pillar = false, sideL = false, sideR = false) {
