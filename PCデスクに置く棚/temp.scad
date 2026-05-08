@@ -103,16 +103,16 @@ space = (130 % (PITCH * 2)) / 2;
 
 // 柱 140mm
 *for (x = [0 : 5]) {
-    translate([CONNECTOR_DEPTH + 1 + (x * 12), 0, 0])
-    linear_extrude(height = pD)
-    {
-      translate([0,  0 * 7, 0]) translate([w / 2, 7, 0]) mirror([0, 1, 0]) connector_female_2d(7);
-      for (y = [1 : 18]) translate([0,  y * 7, 0]) fillet() square([w, 7]);
-      translate([0,  19 * 7, 0]) translate([w / 2, 0, 0]) connector_female_2d(7);
-      translate([0, ((10 * 7) - (w * 1)) + (w / 2) - 1]) rotate([0, 0, 90]) connector_female_2d(CONNECTOR_DEPTH + 1);
-      translate([0, ((10 * 7) - (w * 2)) + (w / 2) - 1]) rotate([0, 0, 90]) connector_female_2d(CONNECTOR_DEPTH + 1);
-    }
+  translate([CONNECTOR_DEPTH + 1 + (x * 12), 0, 0])
+  linear_extrude(height = pD)
+  {
+    translate([0,  0 * 7, 0]) translate([w / 2, 7, 0]) mirror([0, 1, 0]) connector_female_2d(7);
+    for (y = [1 : 18]) translate([0,  y * 7, 0]) fillet() square([w, 7]);
+    translate([0,  19 * 7, 0]) translate([w / 2, 0, 0]) connector_female_2d(7);
+    translate([0, ((10 * 7) - (w * 1)) + (w / 2) - 1]) rotate([0, 0, 90]) connector_female_2d(CONNECTOR_DEPTH + 1);
+    translate([0, ((10 * 7) - (w * 2)) + (w / 2) - 1]) rotate([0, 0, 90]) connector_female_2d(CONNECTOR_DEPTH + 1);
   }
+}
 
 // 中間の横2連レール
 *let () {
