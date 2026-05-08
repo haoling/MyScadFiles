@@ -22,8 +22,7 @@ PLATE_JOINT_SPRING_PILLAR_WIDTH = 2;
 PLATE_JOINT_SPRING_LENGTH = (pD * 2) - (mfDiff * 2); // プレートジョイントのバネの全体の長さ
 
 // 実験用プレート
-if (0)
-{
+*let () {
   translate([15, 0, 0]) plate_edge(width = 18, slope = true, joint = true);
   // translate([-23, -18, 0])
   translate([38, 0, 0]) plate_edge(width = 18, slope = true, joint = true, rear = true);
@@ -40,8 +39,7 @@ if (0)
 
 
 // 130mm x 108mm プレート
-if (0)
-{
+*let () {
   space = (130 % (PITCH * 2)) / 2;
 
   {
@@ -91,7 +89,7 @@ if (0)
 
 // レール130mm
 space = (130 % (PITCH * 2)) / 2;
-if (0) {
+*let () {
   rail(length = space);
   translate([0, space + (PITCH * 0), 0]) rail(pillar = true, sideL = false, sideR = false);
   translate([0, space + (PITCH * 1), 0]) rail(pillar = false, sideL = false, sideR = true);
@@ -104,8 +102,7 @@ if (0) {
 }
 
 // 柱 140mm
-if (0) {
-  for (x = [0 : 2]) {
+*for (x = [0 : 5]) {
     translate([CONNECTOR_DEPTH + 1 + (x * 12), 0, 0])
     linear_extrude(height = pD)
     {
@@ -116,10 +113,9 @@ if (0) {
       translate([0, ((10 * 7) - (w * 2)) + (w / 2) - 1]) rotate([0, 0, 90]) connector_female_2d(CONNECTOR_DEPTH + 1);
     }
   }
-}
 
 // 中間の横2連レール
-if (1) {
+*let () {
   // translate([4, 64, -12]) rotate([90, 0 ,90])
   translate([w, 0, 0])
   {
