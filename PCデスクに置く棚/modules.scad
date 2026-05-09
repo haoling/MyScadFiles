@@ -1,117 +1,41 @@
+include <constants.scad>;
 use <../common.scad>;
 
-$fa = 0.1;
-$fs = 0.1;
-
-PITCH = 18;
-w = 5;
-rH = 7; // 仕切りレール高さ
-rB = 2; // 仕切りレールの底面の厚み
-pD = 10; // 柱の幅
-// pH = 146; // 柱の高さ
-pH = 20;
-CONNECTOR_CIRCLE_WIDTH = 3; // メスコネクタの幅
-CONNECTOR_DEPTH = 3; // メスコネクタの高さ方向の奥行き
-CONNECTOR_ELLIPSE_LENGTH = 0.4; // 半円の下にどれくらいの直線区間を付けるか
-mfDiff = 0.2; // メスコネクタの差し込み部分の余裕
-
-PLATE_JOINT_SPRING_RADIUS = pD * 2; // プレートジョイントのバネの円の半径
-PLATE_JOINT_SPRING_DEPTH = 1.2; // プレートジョイントのバネの厚み
-PLATE_JOINT_SPRING_ARC_LENGTH = (pD * 1.5) - (mfDiff * 2); // プレートジョイントのバネの円弧長
-PLATE_JOINT_SPRING_PILLAR_WIDTH = 2;
-PLATE_JOINT_SPRING_LENGTH = (pD * 2) - (mfDiff * 2); // プレートジョイントのバネの全体の長さ
-
 // 実験用プレート
-*let () {
-  translate([15, 0, 0]) plate_edge(width = 18, slope = true, joint = true);
-  // translate([-23, -18, 0])
-  translate([38, 0, 0]) plate_edge(width = 18, slope = true, joint = true, rear = true);
-  // translate([23, 0 - (w / 2), rB - mfDiff]) mirror([0, 0, 1]) rotate([0, 0, 90])
-  // translate([0, pD - (mfDiff * 2), 0]) rotate([90, 0, 0]) linear_extrude(height = pD - (mfDiff * 2)) translate([w / 2, 0])
-  // {
-  //   connector_female_2d(rB - mfDiff);
-  //   translate([0 - (w / 2), 0]) fillet() square([w, 1 - mfDiff]);
-  // }
-  // translate([17, 0 - (PLATE_JOINT_SPRING_LENGTH / 2), 0])
-  translate([pD / 2, 0, 0])
-  plate_joint_spring();
+let () {
+  roof_connector(center_male = true);
+  // ceiling_connector();
 }
 
+// 天井用
+module roof_connector(width = PITCH * 6, center_male = false) {
+  translate([0, 0, pD]) mirror([1, 0, 0]) rotate([-90, 0, 90])
+  let (width = width - 1) {
+    difference() {
+      cube([width, pD, w]);
 
-// 130mm x 108mm プレート
-*let () {
-  space = (130 % (PITCH * 2)) / 2;
+      // 両端のコネクタ
+      color("red") translate([((0 - rB) + width) - CONNECTOR_DEPTH, pD / 2, w]) rotate([0, 90, 0]) pillar_male();
+      color("red") translate([rB + CONNECTOR_DEPTH, pD / 2, 0]) rotate([0, -90, 0]) pillar_male();
 
-  {
-    // レール
-    translate([108, 0, 0])
-    {
-      rail(length = space);
-      translate([0, space + (PITCH * 0), 0]) rail(pillar = true, sideL = false, sideR = false);
-      translate([0, space + (PITCH * 1), 0]) rail(pillar = false, sideL = false, sideR = true);
-      translate([0, space + (PITCH * 2), 0]) rail(length = PITCH / 2);
-      translate([0, space + (PITCH * 2.5), 0]) rail(pillar = true, sideL = false, sideR = false);
-      translate([0, space + (PITCH * 3.5), 0]) rail(length = PITCH / 2);
-      translate([0, space + (PITCH * 4), 0]) rail(pillar = false, sideL = false, sideR = true);
-      translate([0, space + (PITCH * 5), 0]) rail(pillar = true, sideL = false, sideR = false);
-      translate([0, space + (PITCH * 6), 0]) rail(length = space);
-    }
-
-    // 手前側エッジ
-    translate([0 * PITCH, 0, 0]) plate_edge(width = space + PITCH, slope = true, joint = false);
-    translate([1 * PITCH, 0, 0]) plate_edge(width = space + PITCH, slope = true, joint = true);
-    translate([2 * PITCH, 0, 0]) plate_edge(width = space + PITCH, slope = true, joint = false);
-    translate([3 * PITCH, 0, 0]) plate_edge(width = space + PITCH, slope = true, joint = false);
-    translate([4 * PITCH, 0, 0]) plate_edge(width = space + PITCH, slope = true, joint = true);
-    translate([5 * PITCH, 0, 0]) plate_edge(width = space + PITCH, slope = true, joint = false);
-
-    // 中間エリア
-    for (y = [1 : 4])
-    {
-      for (x = [0 : 5])
-      {
-        translate([x * PITCH, space + (y * PITCH), 0]) plate_edge();
+      // 中間のコネクタ
+      // color("red") translate([width / 2, rB + CONNECTOR_DEPTH, w]) rotate([90, 90, 0]) pillar_male();
+      // color("red") translate([width / 2, rB + CONNECTOR_DEPTH, w]) rotate([-90, 90, 0]) pillar_male();
+      if (center_male) {
+        translate([(width / 2) - (w / 2), 0, -1]) pillar_male(w = w);
+        translate([(width / 2) + (w / 2) + mfDiff, (0 - (pD / 2)) + mfDiff, 1]) cube([mfDiff * 2, pD, 10]);
+        translate([(width / 2) - (w / 2) - (mfDiff * 2), (0 - (pD / 2)) + mfDiff, 1]) cube([mfDiff * 2, pD, 10]);
+        translate([(width / 2), pD / 2, w - mfDiff]) cube([w + (mfDiff * 2), pD * 2, 2], center = true);
       }
     }
-
-    // 奥側エッジ
-    translate([0 * PITCH, space + (5 * PITCH), 0]) plate_edge(rear = true, width = space + PITCH, slope = true, joint = false);
-    translate([1 * PITCH, space + (5 * PITCH), 0]) plate_edge(rear = true, width = space + PITCH, slope = true, joint = true);
-    translate([2 * PITCH, space + (5 * PITCH), 0]) plate_edge(rear = true, width = space + PITCH, slope = true, joint = false);
-    translate([3 * PITCH, space + (5 * PITCH), 0]) plate_edge(rear = true, width = space + PITCH, slope = true, joint = false);
-    translate([4 * PITCH, space + (5 * PITCH), 0]) plate_edge(rear = true, width = space + PITCH, slope = true, joint = true);
-    translate([5 * PITCH, space + (5 * PITCH), 0]) plate_edge(rear = true, width = space + PITCH, slope = true, joint = false);
   }
-
-  translate([0, space + (PITCH * 1) + (PITCH / 2), 0]) linear_extrude(height = rB) rotate([0, 0, 90]) connector_female_2d(CONNECTOR_DEPTH + CONNECTOR_ELLIPSE_LENGTH + (mfDiff * 2));
-  translate([0, space + (PITCH * 4) + (PITCH / 2), 0]) linear_extrude(height = rB) rotate([0, 0, 90]) connector_female_2d(CONNECTOR_DEPTH + CONNECTOR_ELLIPSE_LENGTH + (mfDiff * 2));
 }
 
-// レール130mm
-space = (130 % (PITCH * 2)) / 2;
-*let () {
-  rail(length = space);
-  translate([0, space + (PITCH * 0), 0]) rail(pillar = true, sideL = false, sideR = false);
-  translate([0, space + (PITCH * 1), 0]) rail(pillar = false, sideL = false, sideR = true);
-  translate([0, space + (PITCH * 2), 0]) rail(length = PITCH / 2);
-  translate([0, space + (PITCH * 2.5), 0]) rail(pillar = true, sideL = false, sideR = false);
-  translate([0, space + (PITCH * 3.5), 0]) rail(length = PITCH / 2);
-  translate([0, space + (PITCH * 4), 0]) rail(pillar = false, sideL = false, sideR = true);
-  translate([0, space + (PITCH * 5), 0]) rail(pillar = true, sideL = false, sideR = false);
-  translate([0, space + (PITCH * 6), 0]) rail(length = space);
-}
-
-// 柱 140mm
-*for (x = [0 : 5]) {
-  translate([CONNECTOR_DEPTH + 1 + (x * 12), 0, 0])
-  linear_extrude(height = pD)
-  {
-    translate([0,  0 * 7, 0]) translate([w / 2, 7, 0]) mirror([0, 1, 0]) connector_female_2d(7);
-    for (y = [1 : 18]) translate([0,  y * 7, 0]) fillet() square([w, 7]);
-    translate([0,  19 * 7, 0]) translate([w / 2, 0, 0]) connector_female_2d(7);
-    translate([0, ((10 * 7) - (w * 1)) + (w / 2) - 1]) rotate([0, 0, 90]) connector_female_2d(CONNECTOR_DEPTH + 1);
-    translate([0, ((10 * 7) - (w * 2)) + (w / 2) - 1]) rotate([0, 0, 90]) connector_female_2d(CONNECTOR_DEPTH + 1);
-  }
+// 天井同士の縦方向連結
+module ceiling_connector(length = 50 + mfDiff, width = w) {
+  translate([0, w - mfDiff, 0]) mirror([0, 1, 0]) rotate([90, 0, 0]) linear_extrude(height = (length - (w * 2)) + (mfDiff * 2)) fillet() square([width, 1]);
+  translate([w / 2, w - mfDiff, 0]) rotate([90, 0, 0]) linear_extrude(height = (pD / 2) - mfDiff) connector_female_2d(height = 4);
+  translate([w / 2, length, 0]) rotate([90, 0, 0]) linear_extrude(height = (pD / 2) - mfDiff) connector_female_2d(height = 4);
 }
 
 // 中間の横2連レール
@@ -138,6 +62,40 @@ space = (130 % (PITCH * 2)) / 2;
       translate([0, space + (PITCH * 4), 0]) rail(pillar = false, sideL = false, sideR = false);
       translate([0, space + (PITCH * 5), 0]) rail(pillar = true, sideL = false, sideR = false);
       translate([0, space + (PITCH * 6), 0]) rail(length = space);
+    }
+  }
+}
+
+// デスク引っ掛け用のツメ
+let (depth = 5, width = pD + (mfDiff * 2), length = 5) {
+  *linear_extrude(height = rB - mfDiff)
+  {
+    translate([0, length])
+    let (
+      r = PLATE_JOINT_SPRING_RADIUS, // 円の半径。バネの傾きを決定する
+      depth = PLATE_JOINT_SPRING_DEPTH, // バネの厚み
+      arc_length = PLATE_JOINT_SPRING_ARC_LENGTH, // 円弧長
+      width = PLATE_JOINT_SPRING_PILLAR_WIDTH, // 直線部分の幅
+      length = PLATE_JOINT_SPRING_LENGTH / 2 // 全体の長さ
+    ) {
+      translate([0, length - depth, 0]) // 直線部分に接続する
+      plate_joint_spring_arc_2d(d = depth, r = r, x = arc_length);
+      translate([0 - (width / 2), 0, 0])
+      square([width, length - (depth * 2)]);
+    }
+    translate([0, length / 2]) square([width, length], center = true);
+  }
+}
+
+// 柱
+module pillar(ymax = 1, segment_height = 7, end_connector = false, side_connectors = [], pD = pD) {
+  linear_extrude(height = pD)
+  {
+    translate([0,  0 * segment_height, 0]) translate([w / 2, segment_height, 0]) mirror([0, 1, 0]) connector_female_2d(segment_height);
+    if (ymax - (end_connector ? 1 : 0) >= 1) for (y = [1 : ymax - (end_connector ? 1 : 0)]) translate([0,  y * segment_height, 0]) fillet() square([w, segment_height]);
+    if (end_connector) translate([0,  ymax * segment_height, 0]) translate([w / 2, 0, 0]) connector_female_2d(segment_height);
+    if (len(side_connectors) > 0) for (i = [0 : len(side_connectors) - 1]) {
+      translate([0, ((side_connectors[i] * segment_height) - (w * 1)) + (w / 2)]) rotate([0, 0, 90]) connector_female_2d(CONNECTOR_DEPTH + 1);
     }
   }
 }
@@ -190,7 +148,7 @@ module connector_female_2d(height = pH) {
 }
 
 // 柱用の切り欠き
-module pillar_male() {
+module pillar_male(w = w) {
   translate([0, mfDiff + (pD / 2), 0]) 
   rotate([90, 0, 0])
   linear_extrude(height = pD + (mfDiff * 2)) {
@@ -237,8 +195,6 @@ module plate_joint_male() {
   x = arc_length;
   chord_half = r * sin((x / (2 * r)) * (180 / PI)); // 円弧長から弦の半幅を求める
   y = r - sqrt(pow(r, 2) - pow(chord_half, 2)); // 矢高（サジッタ）
-  echo (str("chord_half: ", chord_half));
-  echo (str("y: ", y));
   depth = 5;
   width = (chord_half * 2) + (mfDiff * 2);
   pillar_width = PLATE_JOINT_SPRING_PILLAR_WIDTH + (mfDiff * 2);
