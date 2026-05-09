@@ -3,7 +3,7 @@ use <../common.scad>;
 
 // 実験用プレート
 let () {
-  roof_connector(center_male = true);
+  roof_connector(center_male = false);
   // ceiling_connector();
 }
 
