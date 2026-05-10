@@ -3,8 +3,6 @@ use <../common.scad>;
 
 // 実験用プレート
 let () {
-  roof_connector(center_male = false);
-  // ceiling_connector();
 }
 
 // 天井用
@@ -274,3 +272,25 @@ module plate_joint_spring_arc_fillet_2d(r, d, x, y, t) {
     mirror([1, 0]) rotate([0, 0, 0 - t]) translate([0, 0 - (pD * 5)]) square(pD * 10);
   }
 }
+
+// 棚が後ろに落ちないようにする柱
+module back_rail_108() {
+  length = (108 + 1 + w) - (mfDiff * 2); // 余裕を持たせる
+  space = (length % (PITCH * 2)) / 2;
+  // を立てるためのレール
+  translate([11 - w, 0, 0]) {
+    rail(length = space);
+    translate([0, space + (PITCH * 0), 0]) rail(pillar = false, sideL = false, sideR = false);
+    translate([0, space + (PITCH * 1), 0]) rail(pillar = false, sideL = false, sideR = false);
+    translate([0, space + (PITCH * 2), 0]) rail(length = PITCH / 2);
+    translate([0, space + (PITCH * 2.5), 0]) rail(pillar = true, sideL = false, sideR = false);
+    translate([0, space + (PITCH * 3.5), 0]) rail(length = PITCH / 2);
+    translate([0, space + (PITCH * 4), 0]) rail(pillar = false, sideL = false, sideR = false);
+    translate([0, space + (PITCH * 5), 0]) rail(pillar = false, sideL = false, sideR = false);
+    translate([0, space + (PITCH * 6), 0]) rail(length = space);
+  }
+  // 両面テープ用のりしろ
+  cube([11 - w, length, rB]);
+}
+  // 柱
+  // 柱と天井を接続するT字コネクタ
