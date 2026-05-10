@@ -292,5 +292,7 @@ module back_rail_108() {
   // 両面テープ用のりしろ
   cube([11 - w, length, rB]);
 }
+module back_rail_pillar() {
   // 柱
+}
   // 柱と天井を接続するT字コネクタ
