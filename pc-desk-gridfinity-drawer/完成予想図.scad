@@ -18,7 +18,8 @@ use <rail 130mm.scad>;
   // を立てるためのレール
   translate([w + mfDiff, 260, 0]) mirror([1, 0, 0]) rotate([0, 0, 90]) back_rail_108();
   // 柱
-  translate([57, 266, rB]) rotate([90, 0, 90]) pillar(ymax = 18, end_connector = true);
+  translate([54.5, 266, rB]) rotate([90, 0, 90]) pillar(ymax = 18, end_connector = true);
+  color("orange") translate([57, (245 + mfDiff) - pD, 142]) mirror([0, 0, 1]) back_rail_connector();
 }
 
 module finalA() {

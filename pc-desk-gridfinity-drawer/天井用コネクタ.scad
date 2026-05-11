@@ -6,5 +6,6 @@ use <rail 130mm.scad>;
 space = 2;
 translate([0, 0, 0]) roof_connector(center_male = true);
 translate([w + space, 0, 0]) roof_connector(center_male = true);
-translate([(w + space) * 2, 0, 0]) roof_connector(center_male = false);
-translate([(w + space) * 3, 25, 0]) ceiling_connector();
+translate([(w + space) * 2, 0, 0]) roof_connector(center_male = true);
+translate([(w + space) * 3, 0, 0]) roof_connector(center_male = true);
+translate([(w + space) * 4, 25, 0]) ceiling_connector();

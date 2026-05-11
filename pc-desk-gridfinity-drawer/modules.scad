@@ -3,6 +3,21 @@ use <../common.scad>;
 
 // 実験用プレート
 let () {
+  space = 0;
+  translate([0, space + (PITCH * 0), 0]) rail(pillar = false, sideL = false, sideR = false);
+  translate([0, space + (PITCH * 1), 0]) rail(pillar = true, sideL = false, sideR = false);
+  translate([0, space + (PITCH * 2), 0]) rail(pillar = false, sideL = false, sideR = false);
+  translate([0, 32, 8]) rotate([90, 0, 0]) pillar(ymax = 3);
+
+  difference() {
+    translate([0, 0, 0]) {
+      translate([10, space + (PITCH * 0), 0]) rail(pillar = false, sideL = false, sideR = false);
+      translate([10, space + (PITCH * 1), 0]) rail(pillar = true, sideL = false, sideR = false);
+      translate([10, space + (PITCH * 2), 0]) rail(pillar = false, sideL = false, sideR = false);
+      translate([10, 32, rB]) rotate([90, 0, 0]) pillar(ymax = 3);
+    }
+    cube([30, 28, 30]);
+  }
 }
 
 // 天井用
@@ -275,7 +290,7 @@ module plate_joint_spring_arc_fillet_2d(r, d, x, y, t) {
 
 // 棚が後ろに落ちないようにする柱
 module back_rail_108() {
-  length = (108 + 1 + w) - (mfDiff * 2); // 余裕を持たせる
+  length = (108 + 1) - (mfDiff * 2); // 余裕を持たせる
   space = (length % (PITCH * 2)) / 2;
   // を立てるためのレール
   translate([11 - w, 0, 0]) {
@@ -288,11 +303,14 @@ module back_rail_108() {
     translate([0, space + (PITCH * 4), 0]) rail(pillar = false, sideL = false, sideR = false);
     translate([0, space + (PITCH * 5), 0]) rail(pillar = false, sideL = false, sideR = false);
     translate([0, space + (PITCH * 6), 0]) rail(length = space);
+    translate([0, space + (PITCH * 6) + space, 0]) rail(length = w);
   }
   // 両面テープ用のりしろ
   cube([11 - w, length, rB]);
 }
-module back_rail_pillar() {
-  // 柱
-}
+module back_rail_connector() {
   // 柱と天井を接続するT字コネクタ
+  ceiling_connector();
+  translate([(PITCH / 2) + (w / 2), 31 - mfDiff, 5]) rotate([0, 0, 90]) rail(pillar = true);
+  translate([0, pD + mfDiff, 0.5]) cube([w, 10, 10]);
+}
