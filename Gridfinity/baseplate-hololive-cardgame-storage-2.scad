@@ -1,4 +1,4 @@
-include <baseplate-hololive-cardgame-storage-1.scad>
+// include <baseplate-hololive-cardgame-storage-1.scad>
 
-connector_x_minus = true;
-global_segment_index = 1;
+// connector_x_minus = true;
+// global_segment_index = 1;
