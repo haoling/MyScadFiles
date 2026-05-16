@@ -1,3 +1,6 @@
 [submodule "Gridfinity/GridFlock"]
 	path = Gridfinity/GridFlock
 	url = https://github.com/yawkat/GridFlock
+[submodule "libs/dotSCAD"]
+	path = libs/dotSCAD
+	url = https://github.com/JustinSDK/dotSCAD
