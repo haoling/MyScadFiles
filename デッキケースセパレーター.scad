@@ -3,8 +3,39 @@ use <./common.scad>;
 $fa = 0.1;
 $fs = 0.1;
 
-even();
-odd();
+deckcase_separator_x2();
+
+/*
+translate([0, 0, 67])
+rotate([-90, 0, 0])
+deckcase_separator();
+
+color("aqua")
+{
+    translate([3.5, 0.8, 0])
+    supportPiller(height = 14.8, length = 5, repeats = 15);
+
+    *translate([0, -5.4, 0])
+    supportPiller(height = 14.8, length = 5, repeats = 20);
+
+    difference()
+    {
+        translate([37.5, 0, 0])
+        supportPiller(space = 5, height = 60, length = 2, repeats = 8);
+
+        for (x = [-0.8, 0.8, 0.8])
+        for (y = [-0.8, 0.8, 0.8])
+        for (z = [0.0, 0.4, 0.4])
+        translate([x, y, z])
+        translate([0, 0, 67])
+        rotate([-90, 0, 0])
+        deckcase_separator();
+    }
+}
+*/
+
+// even();
+// odd();
 
 module even()
 {
@@ -20,9 +51,9 @@ module odd(){
     color("aqua")
     difference()
     {
-        union()
+        height = 3.8;
+        *union()
         {
-            height = 3.8;
 
             translate([34, 0, 0])
             supportPiller(height = height, length = 3, repeats = 21);
@@ -36,10 +67,12 @@ module odd(){
             translate([40, 111, 0])
             supportPiller(height = height, length = 3, repeats = 21);
         }
+        translate([7, 0, 0])
+        supportPiller(height = height, length = 114, repeats = 51);
 
-        for (x = [-0.2, 0.4, 0.2])
-        for (y = [-0.2, 0.4, 0.2])
-        for (z = [0.0, 0.2, 0.2])
+        for (x = [-0.4, 0.8, 0.4])
+        for (y = [-0.4, 0.8, 0.4])
+        for (z = [0.0, 0.4, 0.4])
         translate([x, y, z])
         even();
     }

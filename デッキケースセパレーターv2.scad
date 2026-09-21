@@ -3,30 +3,40 @@ use <./common.scad>;
 $fa = 0.1;
 $fs = 0.1;
 
-translate([0, 0, 67])
-rotate([-90, 0, 0])
-deckcase_separator();
+for (y = [0: 1: 4])
+translate([0, y * 14, 0])
+standing();
 
-color("aqua")
+module standing()
 {
-    translate([57, 0.8, 0])
-    supportPiller(height = 14.8, length = 5, repeats = 15);
+    translate([0, 0, 67])
+    rotate([-90, 0, 0])
+    deckcase_separator();
 
-    *translate([0, -5.4, 0])
-    supportPiller(height = 14.8, length = 5, repeats = 20);
-
-    *difference()
+    color("aqua")
     {
-        translate([37.5, 0, 0])
-        supportPiller(space = 5, height = 60, length = 2, repeats = 8);
+        translate([57, 0.8, 0])
+        supportPiller(height = 14.8, length = 5, repeats = 15);
 
-        for (x = [-0.8, 0.8, 0.8])
-        for (y = [-0.8, 0.8, 0.8])
-        for (z = [0.0, 0.4, 0.4])
-        translate([x, y, z])
-        translate([0, 0, 67])
-        rotate([-90, 0, 0])
-        deckcase_separator();
+        translate([0, 1.8, 0])
+        supportPiller(height = 5, length = 3, repeats = 7);
+
+        *translate([0, -5.4, 0])
+        supportPiller(height = 14.8, length = 5, repeats = 20);
+
+        *difference()
+        {
+            translate([37.5, 0, 0])
+            supportPiller(space = 5, height = 60, length = 2, repeats = 8);
+
+            for (x = [-0.8, 0.8, 0.8])
+            for (y = [-0.8, 0.8, 0.8])
+            for (z = [0.0, 0.4, 0.4])
+            translate([x, y, z])
+            translate([0, 0, 67])
+            rotate([-90, 0, 0])
+            deckcase_separator();
+        }
     }
 }
 
@@ -59,14 +69,10 @@ module deckcase_separator()
 
         color("red")
         polygon([
-            [45, 67],
-            [29.815, 16.55],
-            [25.185, 16.55],
+            [50, 67],
+            [30, 15],
             [10, 67],
         ]);
-        color("red")
-        translate([27.5, 17.5])
-        circle(r = 2.5);
     }
 
     // 板部分の上側
