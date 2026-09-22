@@ -161,7 +161,7 @@ module connector_female_2d(height = pH) {
 }
 
 // 柱用の切り欠き
-module pillar_male(w = w) {
+module pillar_male(w = w, pD = pD) {
   translate([0, mfDiff + (pD / 2), 0]) 
   rotate([90, 0, 0])
   linear_extrude(height = pD + (mfDiff * 2)) {
