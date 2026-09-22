@@ -14,9 +14,10 @@ wall_thickness = 1.36 + 0;
 rail_thickness=0.8 + 0; //[0:0.1:10]
 rail_radius=30 + 0; //[30:1:90]
 rail_gap=2.3 + 0; //[0:0.1:10]
-rail_height = 2 + 0; //[0:0.1:10]
+rail_height = 5 + 0; //[0:0.1:10]
 
 stair = 2.2 + 0;
+LeftRightCutX = 65;
 
 // MainAssemblyの高さ
 MainAssemblyHeight = 51.2 + 0;
@@ -28,6 +29,8 @@ showMainAssembly = false;
 showLeftAssembly = true;
 showRightAssembly = true;
 showFloorAssembly = true;
+showDoorAssembly = true;
+shutterOpen = 0; // [0:1:38]
 
 cutX = 0; // [-72:0.1:72]
 cutY = 0; // [-72:0.1:72]
@@ -51,8 +54,9 @@ difference()
     if (cutZ < 0) color("blue") translate([-10, -10, (MainAssemblyHeight + FloorAssemblyHeight) - 100 + cutZ]) cube([100, 100, 100]);
 }
 
-// translate([2, 70.5, 54.1]) mirror([0, 1, 0])
-*DoorAssembly();
+if (showDoorAssembly)
+translate(preview ? [2, 64.5 + shutterOpen, 56.1] : [0, 0, 0]) mirror(preview ? [0, 1, 0] : [0, 0, 0])
+DoorAssembly();
 
 module MainAssembly() {
     translate([0, 0, -7])
@@ -69,7 +73,7 @@ module MainAssembly() {
 }
 
 module LeftAssembly() {
-    pillerHeight = 65.8;
+    pillerHeight = 63.8;
 
     translate(preview ? (showFloorAssembly ? [0, 0, 7] : [0, 0, 0]) : [51.2, -0.01, -0.01]) rotate(preview ? [0, 0, 0] : [0, -90, 0])
     {
@@ -78,9 +82,9 @@ module LeftAssembly() {
         {
             translate([-0.25, -0.25, 0]) // 原点合わせ
             MainAssembly();
-            translate([67, -10, -10]) cube([100, 100, 100]);
+            translate([LeftRightCutX, -10, -10]) cube([100, 100, 100]);
         }
-        if (cutPanel) color("aqua", 0.2) translate([67, -10, -10]) cube([0.01, 90, 70]);
+        if (cutPanel) color("aqua", 0.2) translate([LeftRightCutX, -10, -10]) cube([0.01, 90, 70]);
 
         // シャッターレール
         translate([0, 0, -2.3 + stair]) RailAssemblyRight();
@@ -88,8 +92,8 @@ module LeftAssembly() {
         // シャッターレール内側の壁
         difference()
         {
-            intersection() for (x = [2:1:34])
-            translate([wall_thickness + (rail_height * x), 0, -2.3 + stair])
+            intersection() for (x = [2:1:13])
+            translate([wall_thickness + (rail_height * x) - 0.3, 0, -2.3 + stair])
             // 薄いバージョン
             translate([-1, 0 - (rail_thickness / 2), 0 - (rail_thickness / 2)]) rotate([0,-90,0]) RailInner(rail_thickness = rail_thickness / 2);
             // 薄くないバージョン
@@ -100,8 +104,8 @@ module LeftAssembly() {
         }
 
         // ホコリ防止のフタ
-        translate([1.2, 47.5, 48.2 + stair])
-        cube([69, 23, rail_thickness]);
+        translate([1.2, 47.7, 48.2 + stair])
+        cube([63.6, 22.6, rail_thickness]);
 
         // 手前側のコネクタ
         translate([1, 1.2, MainAssemblyHeight - pD - 10]) // 移動
@@ -111,9 +115,9 @@ module LeftAssembly() {
         {
             polyhedron_hull(points = [
                 [1.2, 1.2, MainAssemblyHeight - rail_thickness - rail_gap],
-                [ 68.04, 1.2, MainAssemblyHeight - rail_thickness - rail_gap],
-                [ 68.04, 1.2, MainAssemblyHeight - 10],
-                [ 68.04, 1.2 + w, MainAssemblyHeight - 10],
+                [ 65.04, 1.2, MainAssemblyHeight - rail_thickness - rail_gap],
+                [ 65.04, 1.2, MainAssemblyHeight - 10],
+                [ 65.04, 1.2 + w, MainAssemblyHeight - 10],
                 [1.2, 1.2 + w, MainAssemblyHeight - 10],
                 [1.2, 1.2, MainAssemblyHeight - 10],
             ]);
@@ -156,38 +160,43 @@ module RightAssembly() {
         {
             translate([-0.25, -0.25, 0]) // 原点合わせ
             MainAssembly();
-            translate([-10, -10, 0]) cube([10 + 67, 100, 100]);
+            translate([-10, -10, 0]) cube([10 + LeftRightCutX, 100, 100]);
         }
-        if (cutPanel) color("aqua", 0.2) translate([67, -10, -10]) cube([0.01, 90, 70]);
+        if (cutPanel) color("aqua", 0.2) translate([LeftRightCutX, -10, -10]) cube([0.01, 90, 70]);
 
         // シャッターレール
         translate([0, 0, -2.3 + stair]) RailAssemblyLeft();
 
         // 手前側のコネクタ
-        translate([64, 1.2, MainAssemblyHeight - pD - 10]) // 移動
+        translate([62, 1.2, MainAssemblyHeight - pD - 10]) // 移動
         difference()
         {
-            cube([6.4, w, pD]);
+            cube([8.4, w, pD]);
             translate([5, 0, pD / 2]) rotate([-90, 0, 90]) pillar_male();
         }
         translate([72 - 0.5 - rail_height - 1.26, 1.2, MainAssemblyHeight - 10])
         cube([rail_height, w, 10 - rail_thickness - rail_gap]);
 
+        // ホコリ防止のフタ
+        translate([65, 47.7, 48.2 + stair])
+        cube([5.3, 22.6, rail_thickness]);
+
         // ホコリ防止のフタのところのコネクタ
-        translate([64, 58, MainAssemblyHeight - rail_thickness - w]) // 移動
+        translate([62, 58, MainAssemblyHeight - rail_thickness - w]) // 移動
         translate([0, 0, w]) rotate([-90, 0, 0]) // 回転と原点合わせ
         difference()
         {
-            cube([6.4, w, pD]);
+            cube([8.4, w, pD]);
             translate([5, 0, pD / 2]) rotate([-90, 0, 90]) pillar_male();
+            *color("red") cube([10, 0.2, pD]);
         }
 
         // 床側のコネクタ
-        translate([64, 36 - (pD / 2), 2]) // 移動
+        translate([62, 36 - (pD / 2), 2]) // 移動
         translate([0, 0, w]) rotate([-90, 0, 0]) // 回転と原点合わせ
         difference()
         {
-            cube([6.4, w, pD]);
+            cube([8.4, w, pD]);
             translate([5, 0, pD / 2]) rotate([-90, 0, 90]) pillar_male();
         }
     }
