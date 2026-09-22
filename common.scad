@@ -31,13 +31,16 @@ module supportPiller(
 }
 
 module rulerX(line_width = 0.2, width = 2, height = 0.2, length = 100, step = 1) {
+    color("red")
     ruler(line_width = line_width, width = width, height = height, length = length, step = step);
 }
 module rulerY(line_width = 0.2, width = 2, height = 0.2, length = 100, step = 1) {
+    color("green")
     rotate([0, 0, 90])
     ruler(line_width = line_width, width = width, height = height, length = length, step = step);
 }
 module rulerZ(line_width = 0.2, width = 2, height = 0.2, length = 100, step = 1) {
+    color("blue")
     rotate([0, 270, 90])
     ruler(line_width = line_width, width = width, height = height, length = length, step = step);
 }
