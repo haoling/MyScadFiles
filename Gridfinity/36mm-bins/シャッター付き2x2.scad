@@ -113,22 +113,22 @@ module LeftAssembly() {
         // 手前側のコネクタ
         translate([1, 1.2, MainAssemblyHeight - pD - 10]) // 移動
         translate([0, w / 2, 0]) // 原点合わせ
-        rotate([0, 0, -90]) pillerFemale(pillerHeight = pillerHeight);
+        rotate([0, 0, -90]) pillerFemale(pillerHeight = pillerHeight, lr = false);
         // difference()
         {
             polyhedron_hull(points = [
                 [1.2, 1.2, MainAssemblyHeight - rail_thickness - rail_gap],
                 [ 65.04, 1.2, MainAssemblyHeight - rail_thickness - rail_gap],
                 [ 65.04, 1.2, MainAssemblyHeight - 10],
-                [ 65.04, 1.2 + w, MainAssemblyHeight - 10],
-                [1.2, 1.2 + w, MainAssemblyHeight - 10],
+                [ 65.04, 1.2 + w + 0.6, MainAssemblyHeight - 10],
+                [1.2, 1.2 + w + 0.6, MainAssemblyHeight - 10],
                 [1.2, 1.2, MainAssemblyHeight - 10],
             ]);
             // Right側のコネクタ部のすきま
             // color("red") translate([60, 1.2, MainAssemblyHeight - 10]) cube([10, w, 0.4]);
         }
         translate([1.2, 1.2, MainAssemblyHeight - 10])
-        cube([rail_height, w, 10 - rail_thickness - rail_gap]);
+        cube([rail_height, w + 0.6, 10 - rail_thickness - rail_gap]);
 
         // ホコリ防止のフタのところのコネクタ
         translate([1, 58, MainAssemblyHeight - rail_thickness - w]) // 移動
@@ -148,7 +148,7 @@ module LeftAssembly() {
             difference()
             {
                 for (x = [18, 51]) for (y = [24, 48]) translate([x, y, 0])
-                translate([-27.6, -2.5, -0.8]) rotate([0, 90, 0]) supportPiller(space = 2, length = 5, height = 22.4, repeats = 3, width = 0.2);
+                translate([-27.6, -2.5, -0.8]) rotate([0, 90, 0]) supportPiller(space = 2, length = 5, height = 22.2, repeats = 3, width = 0.2);
 
                 translate([-20, 0, -20]) cube([20, 72, 20]);
             }
@@ -172,9 +172,9 @@ module RightAssembly() {
 
         // 手前側のコネクタ
         translate([62, 1.2, MainAssemblyHeight - pD - 10]) // 移動
-        pillerMale();
+        pillerMale(lr = false);
         translate([72 - 0.5 - rail_height - 1.26, 1.2, MainAssemblyHeight - 10])
-        cube([rail_height, w, 10 - rail_thickness - rail_gap]);
+        cube([rail_height, w + 0.6, 10 - rail_thickness - rail_gap]);
 
         // ホコリ防止のフタ
         translate([65, 47.7, MainAssemblyHeight - 3 + stair])
@@ -213,11 +213,12 @@ module FloorAssembly() {
     }
 }
 
-module pillerFemale(pillerHeight = 10, pD = pD, pillerWall = pillerWall, pillerWallSpace = pillerWallSpace, w = w) {
+module pillerFemale(pillerHeight = 10, pD = pD, pillerWall = pillerWall, pillerWallSpace = pillerWallSpace, w = w, lr = true) {
     difference()
     {
         union() {
-            linear_extrude(height = pD) connector_female_2d(height = pillerHeight);
+            translate([lr ? 0.3 : -0.3, 0, 0])
+            linear_extrude(height = pD) connector_female_2d(height = pillerHeight, w = w + 0.6);
 
             // 壁
             linear_extrude(height = pillerWall) translate([-w / 2, 0]) fillet() square([w, pillerHeight]);
@@ -232,13 +233,13 @@ module pillerFemale(pillerHeight = 10, pD = pD, pillerWall = pillerWall, pillerW
     }
 }
 
-module pillerMale(pillerHeight = 8.4, pD = pD, pillerWall = pillerWall, pillerWallSpace = pillerWallSpace, w = w) {
-    translate([3, 0, 0]) cube([pillerHeight - 3, w, pillerWall + pillerWallSpace]);
-    translate([3, 0, pD - (pillerWall + pillerWallSpace)]) cube([pillerHeight - 3, w, pillerWall + pillerWallSpace]);
+module pillerMale(pillerHeight = 8.4, pD = pD, pillerWall = pillerWall, pillerWallSpace = pillerWallSpace, w = w, lr = true) {
+    translate([3, lr ? -0.6 : 0, 0]) cube([pillerHeight - 3, w + 0.6, pillerWall + pillerWallSpace]);
+    translate([3, lr ? -0.6 : 0, pD - (pillerWall + pillerWallSpace)]) cube([pillerHeight - 3, w + 0.6, pillerWall + pillerWallSpace]);
     difference()
     {
-        translate([0, 0, (pillerWall + pillerWallSpace)])
-        cube([pillerHeight, w, pD - ((pillerWall + pillerWallSpace) * 2)]);
+        translate([0, lr ? -0.6 : 0, (pillerWall + pillerWallSpace)])
+        cube([pillerHeight, w + 0.6, pD - ((pillerWall + pillerWallSpace) * 2)]);
         translate([5, 0, pD / 2]) rotate([-90, 0, 90]) pillar_male(pD = pD - ((pillerWall + pillerWallSpace) * 2));
     }
 }
