@@ -18,7 +18,7 @@ rail_height = 5 + 0; //[0:0.1:10]
 
 stair = 2.2 + 0;
 pillerWall = 0.6 + 0;
-pillerWallSpace = 0.4 + 0;
+pillerWallSpace = 0.6 + 0;
 LeftRightCutX = 65 + 0;
 
 
@@ -96,7 +96,7 @@ module LeftAssembly() {
         difference()
         {
             intersection() for (x = [2:1:13])
-            translate([wall_thickness + (rail_height * x) - 0.3, 0, -2.3 + stair])
+            translate([wall_thickness + (rail_height * x) - 1.2, 0, -2.3 + stair])
             // 薄いバージョン
             // translate([-1, 0 - (rail_thickness / 2), 0 - (rail_thickness / 2)]) rotate([0,-90,0]) RailInner(rail_thickness = rail_thickness / 2);
             // 薄くないバージョン
@@ -113,7 +113,7 @@ module LeftAssembly() {
         // 手前側のコネクタ
         translate([1, 1.2, MainAssemblyHeight - pD - 10]) // 移動
         translate([0, w / 2, 0]) // 原点合わせ
-        rotate([0, 0, -90]) pillerFemale(pillerHeight = pillerHeight, lr = false);
+        rotate([0, 0, -90]) pillerFemale(pillerHeight = pillerHeight);
         // difference()
         {
             polyhedron_hull(points = [
@@ -131,14 +131,14 @@ module LeftAssembly() {
         cube([rail_height, w + 0.6, 10 - rail_thickness - rail_gap]);
 
         // ホコリ防止のフタのところのコネクタ
-        translate([1, 58, MainAssemblyHeight - rail_thickness - w]) // 移動
-        translate([0, 0, w / 2]) // 原点合わせ
+        translate([1, 59, MainAssemblyHeight - rail_thickness - (w + pillerWallSpace)]) // 移動
+        translate([0, 0, (w / 2) + pillerWallSpace]) // 原点合わせ
         rotate([0, -90, -90]) pillerFemale(pillerHeight = pillerHeight);
 
         // 床側のコネクタ
-        translate([1, 36 - (pD / 2), 2]) // 移動
-        translate([0, 0, w / 2]) // 原点合わせ
-        rotate([0, -90, -90]) pillerFemale(pillerHeight = pillerHeight);
+        translate([1, 36 - (pD / 2), 2.2]) // 移動
+        translate([0, pD, w / 2]) // 原点合わせ
+        rotate([0, 90, -90]) pillerFemale(pillerHeight = pillerHeight);
 
         // 床との接続
         for (x = [18, 51]) for (y = [24, 48]) translate([x, y, 1.2])
@@ -171,8 +171,8 @@ module RightAssembly() {
         translate([0, 0, -2.3 + stair]) RailAssemblyLeft();
 
         // 手前側のコネクタ
-        translate([62, 1.2, MainAssemblyHeight - pD - 10]) // 移動
-        pillerMale(lr = false);
+        translate([62, w + pillerWallSpace + 1.2, MainAssemblyHeight - pD - 10]) // 移動
+        mirror([0, 1, 0]) pillerMale();
         translate([72 - 0.5 - rail_height - 1.26, 1.2, MainAssemblyHeight - 10])
         cube([rail_height, w + 0.6, 10 - rail_thickness - rail_gap]);
 
@@ -181,13 +181,13 @@ module RightAssembly() {
         cube([5.3, 22.6, rail_thickness]);
 
         // ホコリ防止のフタのところのコネクタ
-        translate([62, 58, MainAssemblyHeight - rail_thickness - w]) // 移動
-        translate([0, 0, w]) rotate([-90, 0, 0]) // 回転と原点合わせ
+        translate([62, 59, MainAssemblyHeight - rail_thickness - w - pillerWallSpace]) // 移動
+        translate([0, pD, 0]) rotate([90, 0, 0]) // 回転と原点合わせ
         pillerMale();
 
         // 床側のコネクタ
-        translate([62, 36 - (pD / 2), 2]) // 移動
-        translate([0, 0, w]) rotate([-90, 0, 0]) // 回転と原点合わせ
+        translate([62, 36 - (pD / 2), 2.2]) // 移動
+        translate([0, 0, w + pillerWallSpace]) rotate([-90, 0, 0]) // 回転と原点合わせ
         pillerMale();
     }
 }
@@ -213,17 +213,20 @@ module FloorAssembly() {
     }
 }
 
-module pillerFemale(pillerHeight = 10, pD = pD, pillerWall = pillerWall, pillerWallSpace = pillerWallSpace, w = w, lr = true) {
+module pillerFemale(pillerHeight = 10, pD = pD, pillerWall = pillerWall, pillerWallSpace = pillerWallSpace, w = w) {
     difference()
     {
+        translate([0 - pillerWallSpace, 0, 0])
         union() {
-            translate([lr ? 0.3 : -0.3, 0, 0])
-            linear_extrude(height = pD) connector_female_2d(height = pillerHeight, w = w + 0.6);
+            linear_extrude(height = pD) connector_female_2d(height = pillerHeight);
+
+            // 接触面
+            linear_extrude(height = pD) translate([pillerWallSpace, 0]) fillet() square([w / 2, pillerHeight - 3]);
 
             // 壁
-            linear_extrude(height = pillerWall) translate([-w / 2, 0]) fillet() square([w, pillerHeight]);
+            linear_extrude(height = pillerWall) translate([-w / 2, 0]) fillet() square([w + pillerWallSpace, pillerHeight]);
             translate([0, 0, pD - pillerWall])
-            linear_extrude(height = pillerWall) translate([-w / 2, 0]) fillet() square([w, pillerHeight]);
+            linear_extrude(height = pillerWall) translate([-w / 2, 0]) fillet() square([w + pillerWallSpace, pillerHeight]);
         }
 
         // コネクタ部のすきま
@@ -233,13 +236,12 @@ module pillerFemale(pillerHeight = 10, pD = pD, pillerWall = pillerWall, pillerW
     }
 }
 
-module pillerMale(pillerHeight = 8.4, pD = pD, pillerWall = pillerWall, pillerWallSpace = pillerWallSpace, w = w, lr = true) {
-    translate([3, lr ? -0.6 : 0, 0]) cube([pillerHeight - 3, w + 0.6, pillerWall + pillerWallSpace]);
-    translate([3, lr ? -0.6 : 0, pD - (pillerWall + pillerWallSpace)]) cube([pillerHeight - 3, w + 0.6, pillerWall + pillerWallSpace]);
+module pillerMale(pillerHeight = 8.4, pD = pD, pillerWall = pillerWall, pillerWallSpace = pillerWallSpace, w = w) {
+    translate([3, 0, 0]) cube([pillerHeight - 3, w + pillerWallSpace, pD]);
     difference()
     {
-        translate([0, lr ? -0.6 : 0, (pillerWall + pillerWallSpace)])
-        cube([pillerHeight, w + 0.6, pD - ((pillerWall + pillerWallSpace) * 2)]);
+        translate([0, 0, (pillerWall + pillerWallSpace)])
+        cube([pillerHeight, w, pD - ((pillerWall + pillerWallSpace) * 2)]);
         translate([5, 0, pD / 2]) rotate([-90, 0, 90]) pillar_male(pD = pD - ((pillerWall + pillerWallSpace) * 2));
     }
 }
