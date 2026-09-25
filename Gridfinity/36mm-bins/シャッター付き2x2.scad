@@ -39,22 +39,28 @@ cutX = 0; // [-72:0.1:72]
 cutY = 0; // [-72:0.1:72]
 cutZ = 0; // [-65.2:0.1:65.2]
 
-difference()
-{
-    union()
-    {
-        if(showMainAssembly) MainAssembly();
-        if(showLeftAssembly) LeftAssembly();
-        if(showRightAssembly) RightAssembly();
-        if(showFloorAssembly) FloorAssembly();
-    }
+if(showMainAssembly)
+difference() {
+    MainAssembly();
+    cutPlate("white");
+}
 
-    if (cutX > 0) color("blue") translate([cutX, -10, -10]) cube([100, 100, 100]);
-    if (cutX < 0) color("blue") translate([72 - 100 + cutX, -10, -10]) cube([100, 100, 100]);
-    if (cutY > 0) color("blue") translate([-10, cutY, -10]) cube([100, 100, 100]);
-    if (cutY < 0) color("blue") translate([-10, 72 - 100 + cutY, -10]) cube([100, 100, 100]);
-    if (cutZ > 0) color("blue") translate([-10, -10, cutZ]) cube([100, 100, 100]);
-    if (cutZ < 0) color("blue") translate([-10, -10, (MainAssemblyHeight + FloorAssemblyHeight) - 100 + cutZ]) cube([100, 100, 100]);
+if(showLeftAssembly)
+difference() {
+    LeftAssembly();
+    cutPlate();
+}
+
+if(showRightAssembly)
+difference() {
+    RightAssembly();
+    cutPlate("orange");
+}
+
+if(showFloorAssembly)
+difference() {
+    FloorAssembly();
+    cutPlate("aqua");
 }
 
 if (showDoorAssembly)
@@ -252,6 +258,15 @@ module DoorAssemblyRound() {
         DoorAssembly();
         linear_extrude(height = 10) fillet(r = 3, r2 = 3) square([door_widthf, door_height+door_height_offset]);
     }
+}
+
+module cutPlate(plateColor = "blue") {
+    if (cutX > 0) color(plateColor) translate([cutX, -10, -10]) cube([100, 100, 100]);
+    if (cutX < 0) color(plateColor) translate([72 - 100 + cutX, -10, -10]) cube([100, 100, 100]);
+    if (cutY > 0) color(plateColor) translate([-10, cutY, -10]) cube([100, 100, 100]);
+    if (cutY < 0) color(plateColor) translate([-10, 72 - 100 + cutY, -10]) cube([100, 100, 100]);
+    if (cutZ > 0) color(plateColor) translate([-10, -10, cutZ]) cube([100, 100, 100]);
+    if (cutZ < 0) color(plateColor) translate([-10, -10, (MainAssemblyHeight + FloorAssemblyHeight) - 100 + cutZ]) cube([100, 100, 100]);
 }
 
 *translate([0, 71, 36]) rulerX(step = 0.1, line_width = 0.05);
