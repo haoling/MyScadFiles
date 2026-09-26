@@ -151,7 +151,7 @@ module rail_2d() {
 }
 
 // メス側
-module connector_female_2d(height = pH) {
+module connector_female_2d(height = pH, w = w) {
   translate([0 - (w / 2), height])
   mirror([0, 1, 0])
   fillet() difference() {
