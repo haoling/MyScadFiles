@@ -2,7 +2,7 @@ include <constants.scad>;
 use <modules.scad>;
 
 plate130x108(
-  // connector_left = false, rail_right = false, snap_clip = true,
+  connector_left = false, rail_right = false, snap_clip = true,
 );
 // 130mm x 108mm プレート
 
@@ -84,6 +84,6 @@ module plate130x108(
   // 前後に動かないようにするツメ
   if (snap_clip) {
     translate([2.25, space + (PITCH * 3) - (pD / 2), rB]) rotate([-90, 0, 0]) linear_extrude(height = pD) difference() { connector_female_2d(height = w + rB - (1 - mfDiff)); square([10, 20]);}
-    translate([106.05, space + (PITCH * 3) - (pD / 2), rB]) rotate([-90, 0, 0]) linear_extrude(height = pD) mirror([1, 0, 0]) difference() { connector_female_2d(height = w + rB - (1 - mfDiff)); square([10, 20]);}
+    translate([105.85, space + (PITCH * 3) - (pD / 2), rB]) rotate([-90, 0, 0]) linear_extrude(height = pD) mirror([1, 0, 0]) difference() { connector_female_2d(height = w + rB - (1 - mfDiff)); square([10, 20]);}
   }
 }
