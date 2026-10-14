@@ -10,8 +10,8 @@ H = 83;
 WS = 0.8; // WhiteSpace
 d = 0.6; // 厚み
 X = 70 - WS;
-Y = 62 - WS;
-r = 19.25;
+Y = 61 - WS;
+r = 19.75;
 rL = 43.6 - (r * 2); // 手前から円筒までの距離
 
 
@@ -48,7 +48,7 @@ union() {
     G2W = 43; // G2の幅
     difference()
     {
-        translate([X - (r * 2) - 6, ((G2W / 2) + 0.3) - (Ys / 2), 58 - Zs])
+        translate([X - (r * 2) - 6, ((G2W / 2) + 0.3) - (Ys / 2), 56 - Zs])
         {
 
             difference()
